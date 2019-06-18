@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+XML文件，对应数据库操作。
+此文件由 wubin9.com 网站的自动代码 autoWeb 自动生成。
+生成时间：2019年06月17日 14:30:10 
+可以根据需求随意修改，如果需要帮助，请联系 吴彬 
+联系方式：QQ 810978593  微信  wubin0830bingo 邮箱 wubin5922@dingtalk.com 
+--> 
+
+<mapper namespace="com.gg.www.articleWeb.mapper.IArticleWebMapper">
+	<resultMap id="resultMap" type="com.gg.www.articleWeb.domain.ArticleWeb">
+		<id column="article_web_id" jdbcType="INTEGER" property="articleWebId" />
+		<result column="title" jdbcType="CHAR" property="title" />
+		<result column="category_name" jdbcType="CHAR" property="categoryName" />
+		<result column="summary" jdbcType="VARCHAR" property="summary" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="tb_status" jdbcType="CHAR" property="tbStatus" />
+	</resultMap>
+	<sql id="columnList">
+article_web_id,title,category_name,summary,content,create_time,update_time,tb_status	</sql>
+		<insert id="insert" useGeneratedKeys="true" keyProperty="entity.articleWebId">
+		INSERT INTO ${tableName} (
+		title, category_name, summary, content
+		) VALUES (
+		#{entity.title}, #{entity.categoryName}, #{entity.summary}, #{entity.content}
+		)	</insert>
+		<insert id="insertByBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="articleWebId" >
+		INSERT INTO ${tableName} (
+		title, category_name, summary, content
+		) VALUES 
+		<foreach collection="list" item="entity" index="index" separator=",">
+			(#{entity.title}, #{entity.categoryName}, #{entity.summary}, #{entity.content})
+		</foreach>
+	</insert>
+		<update id="update"  parameterType="java.util.List" >
+		<foreach collection="list" item="entity" index="index" separator=";">
+		UPDATE ${tableName} SET 
+		title=#{entity.title}, category_name=#{entity.categoryName}, summary=#{entity.summary}, content=#{entity.content}, tb_status=#{entity.tbStatus}
+		 WHERE 
+		article_web_id = #{entity.articleWebId}
+
+		</foreach>
+	</update>
+	<update id="updateByBatch" >
+			UPDATE ${tableName} SET
+				${field}
+			<where>
+				<foreach collection="condition" index="key" item="value">
+					${value} ${key}
+				</foreach>
+			</where>
+	</update>
+	<select id="getById" parameterType="java.lang.Integer" resultMap="resultMap">
+		select
+		<include refid="columnList" />
+		from ${tableName} 
+		where article_web_id = #{id}
+	</select>
+	<select id="getOne" parameterType="java.util.Map" resultMap="resultMap">
+		select
+		<if test="field == null">
+			<include refid="columnList" />
+		</if>
+		<if test="field != null">
+			${field}
+		</if>
+		from ${tableName} 
+		<where>
+			<foreach collection="condition" index="key" item="value">
+				${value} ${key}
+			</foreach>
+		</where>
+		limit 1;
+	</select>
+	<select id="getCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+		count(article_web_id)
+		from ${tableName} 
+		<where>
+			<foreach collection="condition" index="key" item="value">
+				${value} ${key}
+			</foreach>
+		</where>
+	</select>
+	<!-- 这部分为根据传递参数，自动生成SQL -->
+	<select id="getList" parameterType="java.util.Map" resultMap="resultMap">
+		select
+		<if test="field == null">
+			<include refid="columnList" />
+		</if>
+		<if test="field != null">
+			${field}
+		</if>
+		from ${tableName} 
+		<where>
+			<foreach collection="condition" index="key" item="value">
+				${value} ${key}
+			</foreach>
+		</where>
+		<if test="order != null">
+			order by ${order}
+		</if>
+		<if test="limit != 0">
+			<if test="offset != 0">
+				limit ${offset}, ${limit}
+			</if>
+			<if test="offset == 0">
+				limit ${limit}
+			</if>
+		</if>
+	</select>
+	<!-- 判断表格是否存在，如果不存在可以配合createTable使用，用于动态创建表格 -->
+	<select id="existTable" parameterType="String" resultType="java.lang.Integer">
+		select count(table_name) from information_schema.TABLES WHERE table_name=#{tableName} ;
+	</select>
+	<update id="createTable" parameterType="String">
+		<!-- 这里是创建表格的SQL，复制过来，表名作为参数传递 -->
+		<!-- create table ${tableName} (   //  表名要这样写 -->
+	</update>
+	<cache />
+</mapper>
